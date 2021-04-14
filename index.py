@@ -1,14 +1,24 @@
 import os
-renamePath = 'C:\\Users\\jagje\\Documents\\Arduino'
-os.chdir(renamePath)#ejecuta cd {renamePath}
-streamCdComand = os.popen('pwd') # obtengo el directorio de trabajo
-pathOriginal = streamCdComand.read()
-#print(renamePath)
-arr = os.listdir(renamePath)
+from subprocess import call, STDOUT
+from core.GitRepoManager import GitRepoManager
+from dotenv import load_dotenv
+from dotenv import dotenv_values
+
+load_dotenv()
+config = dotenv_values(".env")
+pwdPath = config.PWD
+os.chdir(pwdPath)#ejecuta cd {pwdPath}
+#print(pwdPath)
+arr = os.listdir(pwdPath)
+classGit = GitRepoManager()
 for item in arr:
-    path = os.path.join(renamePath,item)
+
+    path = os.path.join(pwdPath,item)
     if os.path.isdir(path):
-        streamCdComand = os.popen(f'cd {path}')
-        outputCdComand = streamCdComand.read()
+
+        os.chdir(path)
         if not outputCdComand:
-            os.system(f'git pull ')
+            if call(["git", "branch"], stderr=STDOUT, stdout=open(os.devnull, 'w')) != 0:
+                classGit.pullRepository(path)
+            else:
+                continue
