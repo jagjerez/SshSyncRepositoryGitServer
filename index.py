@@ -21,4 +21,5 @@ for item in arr:
             if call(["git", "branch"], stderr=STDOUT, stdout=open(os.devnull, 'w')) != 0:
                 classGit.pullRepository(path)
             else:
+                print(f'el directorio {path} no es un repositorio de git')
                 continue
